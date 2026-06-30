@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>ERD SportMate</title>
+<style>
+  body {
+    background: #ffffff;
+    font-family: Arial, sans-serif;
+    padding: 24px;
+    color: #1a1a1a;
+  }
+  .erd-wrap {
+    max-width: 1200px;
+    margin: auto;
+  }
+  .erd-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #1F3864;
+    margin-bottom: 8px;
+  }
+  .erd-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .badge {
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: bold;
+  }
+  .badge-upd { background: #E1F5EE; color: #085041; }
+  .badge-new { background: #FAEEDA; color: #633806; }
+  
+  #erd { overflow-x: auto; margin-top: 20px; }
+  #erd svg.erDiagram .divider path { stroke-opacity: 0.5; }
+  #erd svg.erDiagram .row-rect-odd path,
+  #erd svg.erDiagram .row-rect-odd rect,
+  #erd svg.erDiagram .row-rect-even path,
+  #erd svg.erDiagram .row-rect-even rect { stroke: none !important; }
+</style>
+</head>
+<body>
+
+<div class="erd-wrap">
+  <div class="erd-title">ERD SportMate - Final Updated</div>
+  <div class="erd-badges">
+    <span class="badge badge-upd">Database Final</span>
+    <span class="badge badge-new">Dengan user_sport_schedules</span>
+  </div>
+
+  <div id="erd"></div>
+</div>
+
+<script type="module">
+import mermaid from 'https://esm.sh/mermaid@11/dist/mermaid.esm.min.mjs';
+await document.fonts.ready;
+
+mermaid.initialize({
+  startOnLoad: false,
+  theme: 'base',
+  fontFamily: 'Arial, sans-serif',
+  themeVariables: {
+    darkMode: false,
+    fontSize: '13px',
+    fontFamily: 'Arial, sans-serif',
+    lineColor: '#444444',
+    textColor: '#1a1a1a',
+    primaryColor: '#1F3864',
+    primaryTextColor: '#ffffff',
+    primaryBorderColor: '#1F3864',
+    secondaryColor: '#D9E2F3',
+    tertiaryColor: '#F2F2F2',
+    nodeTextColor: '#1a1a1a',
+    attributeBackgroundColorOdd: '#FFFFFF',
+    attributeBackgroundColorEven: '#EEF2FA',
+  },
+});
+
+const src = `erDiagram
+  USERS ||--o{ EVENTS : "membuat"
+  USERS ||--o{ USER_SPORTS : "memiliki"
+  SPORTS ||--o{ USER_SPORTS : "dimiliki"
+  USER_SPORTS ||--o{ USER_SPORT_SCHEDULES : "dijadwalkan"
+  USERS ||--o{ EVENTS_PARTICIPANTS : "bergabung"
+  EVENTS ||--o{ EVENTS_PARTICIPANTS : "diikuti"
+  USERS ||--o{ FRIENDS : "pengirim"
+  USERS ||--o{ FRIENDS : "penerima"
+  SPORTS ||--o{ EVENTS : "kategori"
+
+  USERS {
+    bigint id PK
+    varchar nama
+    varchar email
+    varchar password
+    date tanggal_lahir
+    varchar gender
+    varchar kota
+    varchar foto
+    timestamp created_at
+    timestamp updated_at
+  }
+  SPORTS {
+    bigint id PK
+    varchar nama_sport
+  }
+  USER_SPORTS {
+    bigint id PK
+    bigint user_id FK
+    bigint sport_id FK
+  }
+  USER_SPORT_SCHEDULES {
+    bigint id PK
+    bigint user_sport_id FK
+    enum hari
+  }
+  EVENTS {
+    bigint id PK
+    bigint user_id FK
+    bigint sport_id FK
+    varchar nama_event
+    date tanggal
+    time jam
+    varchar lokasi
+    int kuota
+    enum status
+  }
+  EVENTS_PARTICIPANTS {
+    bigint id PK
+    bigint user_id FK
+    bigint event_id FK
+    varchar status
+    timestamp joined_at
+  }
+  FRIENDS {
+    bigint id PK
+    bigint pengirim_id FK
+    bigint penerima_id FK
+    enum status
+  }
+`;
+
+const { svg } = await mermaid.render('erd-svg', src);
+document.getElementById('erd').innerHTML = svg;
+
+// Script untuk membulatkan sudut kotak entitas
+document.querySelectorAll('#erd svg.erDiagram .node').forEach(node => {
+  const firstPath = node.querySelector('path[d]');
+  if (!firstPath) return;
+  const d = firstPath.getAttribute('d');
+  const nums = d.match(/-?[\d.]+/g)?.map(Number);
+  if (!nums || nums.length < 8) return;
+  const xs = [nums[0], nums[2], nums[4], nums[6]];
+  const ys = [nums[1], nums[3], nums[5], nums[7]];
+  const x = Math.min(...xs), y = Math.min(...ys);
+  const w = Math.max(...xs) - x, h = Math.max(...ys) - y;
+  const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+  rect.setAttribute('x', x); rect.setAttribute('y', y);
+  rect.setAttribute('width', w); rect.setAttribute('height', h);
+  rect.setAttribute('rx', '8');
+  for (const a of ['fill', 'stroke', 'stroke-width', 'class', 'style']) {
+    if (firstPath.hasAttribute(a)) rect.setAttribute(a, firstPath.getAttribute(a));
+  }
+  firstPath.replaceWith(rect);
+});
+
+// Hilangkan border abu-abu bawaan
+document.querySelectorAll('#erd svg.erDiagram .row-rect-odd path, #erd svg.erDiagram .row-rect-odd rect, #erd svg.erDiagram .row-rect-even path, #erd svg.erDiagram .row-rect-even rect').forEach(p => {
+  p.setAttribute('stroke', 'none');
+});
+</script>
+</body>
+</html>
