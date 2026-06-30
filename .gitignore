@@ -25,3 +25,7 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+/vendor
+/node_modules
+.env
+3e54a09b0083a10cd02eb8b970e7464927d6ad27
