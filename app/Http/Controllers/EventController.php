@@ -14,7 +14,11 @@ class EventController extends Controller
     public function index(Request $request)
     {
         // 1. MODIFIKASI: Hapus ->where('status', '!=', 'canceled') supaya event canceled TETAP DIPANGGIL
-        $query = Event::with(['sport', 'creator', 'participants']);
+        $query = Event::with(['sport', 'creator', 'participants'])
+        ->where(function ($q) {
+        $q->where('status', '!=', 'canceled')
+        ->orWhere('updated_at', '>=', now()->subMinutes(15));
+    });
 
         if ($request->filled('sport_id')) {
             $query->where('sport_id', $request->sport_id);

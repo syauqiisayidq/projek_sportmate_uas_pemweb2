@@ -8,14 +8,20 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script>
-        tailwind.config = {
+         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: { sans: ['Poppins', 'sans-serif'] },
                     colors: {
-                        primary: { DEFAULT: '#10B981', dark: '#0E9F71', light: '#D1FAE5' },
-                        navy: '#0F1E3D',
-                    }
+                        primary: '#108961',
+                        primaryDark: '#0b6b4c',
+                        primaryLight: '#14B87F',
+                        navy: '#1E3A5F',
+                        navyDark: '#16283F',
+                        lime: '#A3E635',
+                        light: '#F8FAFC',
+                    },
+                    fontFamily: { sans: ['Poppins', 'ui-sans-serif', 'system-ui'] },
+                    boxShadow: { soft: '0 10px 30px -12px rgba(30,58,95,0.15)' },
                 }
             }
         }
@@ -25,15 +31,40 @@
         ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-thumb { background:#c9d6d2; border-radius:4px; }
     </style>
 </head>
+
+<script src="https://unpkg.com/feather-icons"></script>
+
+<script>
+    feather.replace();
+</script>
+
 <body class="min-h-screen text-slate-800">
 
 <div class="flex min-h-screen">
     {{-- Sidebar --}}
-    <aside class="hidden md:flex md:flex-col w-64 bg-white border-r border-slate-100 fixed h-full">
-        <div class="px-6 py-6 flex items-center gap-2 border-b border-slate-100">
-            <div class="w-9 h-9 rounded-xl bg-primary flex items-center justify-center text-white font-bold text-lg">S</div>
-            <span class="text-xl font-extrabold text-navy">SportMate</span>
-        </div>
+    <aside class="hidden lg:flex w-64 shrink-0 bg-navy text-white min-h-screen flex-col sticky top-0">
+        <div class="px-6 py-7 flex items-center gap-3">
+    <div class="w-12 h-12 rounded-xl bg-primary flex items-center justify-center text-white font-bold text-2xl">
+        
+
+    <!-- Logo -->
+                <svg xmlns="http://www.w3.org/2000/svg"
+                     class="w-7 h-7 text-white"
+                     fill="currentColor"
+                     viewBox="0 0 24 24">
+
+                    <path d="M12 2C8 2 4.7 5.3 4.7 9.4c0 5.2 7.3 12.6 7.3 12.6s7.3-7.4 7.3-12.6C19.3 5.3 16 2 12 2zm0 10a2.8 2.8 0 100-5.6 2.8 2.8 0 000 5.6z"/>
+
+                </svg>
+
+            </div>
+
+    <div>
+        <h1 class="text-2xl font-extrabold text-white leading-none">
+            SportMate
+        </h1>
+    </div>
+</div>
         <nav class="flex-1 px-4 py-6 space-y-1">
             @php
                 $navItems = [
@@ -57,7 +88,7 @@
                 <a href="{{ route($item['route']) }}"
                    class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition
                    {{ request()->routeIs($item['route']) || (str($item['route'])->contains('profile') && request()->routeIs('profile.*'))
-                        ? 'bg-primary/10 text-primary-dark' : 'text-slate-500 hover:bg-slate-50' }}">
+                        ? 'bg-primary/10 text-primary-dark' : 'text-slate-400 hover:bg-slate-50' }}">
                     <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="{{ $icons[$item['icon']] }}"/></svg>
                     {{ $item['label'] }}
                 </a>
@@ -99,7 +130,7 @@
         </a>
     </div>
 
-    <main class="flex-1 md:ml-64 pt-16 md:pt-0 pb-20 md:pb-0">
+    <main class="flex-1 p-2">
         <div class="max-w-6xl mx-auto p-4 md:p-8">
             @if(session('status'))
                 <div class="mb-4 bg-primary/10 text-primary-dark border border-primary/20 px-4 py-3 rounded-xl text-sm font-medium">

@@ -12,43 +12,89 @@
     </a>
 
     <div class="grid grid-cols-5 gap-3 mb-8">
-        @foreach(['Futsal' => 'M12 2a10 10 0 1 0 .1 20A10 10 0 0 0 12 2Z', 'Badminton' => 'M12 2 2 22h20L12 2Z', 'Basket' => 'M12 2a10 10 0 1 0 .1 20A10 10 0 0 0 12 2Z', 'Running' => 'M13 5a2 2 0 1 0-2-2 2 2 0 0 0 2 2Z', 'Cycling' => 'M5 17a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm14 0a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z'] as $label => $icon)
+        @foreach(['Futsal' => 'M12 6a6 6 0 1 0 0 12a6 6 0 1 0 0-12Z', 'Badminton' => 'M8 16l8-8M13 5l6 6M8 16l-3 3', 'Basket' => 'M12 2a10 10 0 1 0 0 20a10 10 0 1 0 0-20M2 12h20M12 2c3 3 3 17 0 20M12 2c-3 3-3 17 0 20', 'Running' => 'M3 14c3-6 6 6 9 0s5 4 9-2', 
+        'Cycling' => 'M5 17a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm14 0a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z'] as $label => $icon)
             <a href="{{ route('explore.index', ['q' => $label]) }}" class="flex flex-col items-center gap-2">
                 <div class="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary-dark">
-                    <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor"><path d="{{ $icon }}"/></svg>
+                    <svg class="w-6 h-6" viewBox="0 0 24 24" fill="outline"><path d="{{ $icon }}"/></svg>
                 </div>
                 <span class="text-xs text-slate-500 font-medium">{{ $label }}</span>
             </a>
         @endforeach
     </div>
+    
 
     <div class="grid md:grid-cols-3 gap-6">
-        <div class="md:col-span-2 space-y-6">
+    <div class="md:col-span-2">
+        
             <div>
                 <div class="flex items-center justify-between mb-3">
                     <h2 class="font-bold text-navy">Upcoming Event</h2>
                     <a href="{{ route('events.index') }}" class="text-sm text-primary font-semibold">Lihat semua</a>
                 </div>
-                @if($upcomingEvent)
-                    <a href="{{ route('events.show', $upcomingEvent) }}" class="block bg-white rounded-2xl shadow-sm overflow-hidden border border-slate-100 hover:shadow-md transition">
-                        <div class="h-32 bg-gradient-to-r from-emerald-400 to-emerald-600 flex items-center justify-center text-white font-bold text-lg">
-                            {{ $upcomingEvent->sport->nama_sport ?? 'Event' }}
-                        </div>
-                        <div class="p-4">
-                            <h3 class="font-bold text-navy">{{ $upcomingEvent->nama_event }}</h3>
-                            <p class="text-xs text-slate-400 mt-1">📍 {{ $upcomingEvent->lokasi }}</p>
-                            <p class="text-xs text-slate-400">🕗 {{ \Carbon\Carbon::parse($upcomingEvent->tanggal)->translatedFormat('l, d M Y') }} • {{ substr($upcomingEvent->jam,0,5) }} WIB</p>
-                            <div class="flex items-center justify-between mt-3">
-                                <span class="text-xs bg-slate-100 px-2 py-1 rounded-full text-slate-500">{{ $upcomingEvent->jumlah_peserta }}/{{ $upcomingEvent->kuota }} peserta</span>
-                                <span class="bg-primary text-white text-xs font-semibold px-4 py-1.5 rounded-full">Lihat Detail</span>
-                            </div>
-                        </div>
-                    </a>
-                @else
-                    <div class="bg-white rounded-2xl p-6 text-center text-slate-400 text-sm border border-slate-100">Belum ada event mendatang.</div>
-                @endif
+               @if($upcomingEvents->count())
+
+    @foreach($upcomingEvents as $upcomingEvent)
+
+        <a href="{{ route('events.show', $upcomingEvent) }}"
+           class="block relative overflow-hidden border border-slate-100 rounded-2xl mb-4 shadow-soft group">
+
+            <div class="relative h-32 bg-gradient-to-br from-primaryLight via-primary to-navy overflow-hidden flex items-center justify-center text-white font-bold text-lg">
+
+                {{ $upcomingEvent->sport->nama_sport ?? 'Event' }}
+
+                <svg class="absolute -right-6 -top-6 w-40 h-40 text-white/10"
+                     viewBox="0 0 100 100"
+                     fill="none">
+                    <circle cx="50" cy="50" r="48" stroke="currentColor" stroke-width="2"/>
+                    <circle cx="50" cy="50" r="32" stroke="currentColor" stroke-width="2"/>
+                </svg>
+
             </div>
 
+            <div class="p-4">
+
+                <h3 class="font-bold text-navy">
+                    {{ $upcomingEvent->nama_event }}
+                </h3>
+
+                <p class="text-xs text-slate-400 mt-1">
+                    📍 {{ $upcomingEvent->lokasi }}
+                </p>
+
+                <p class="text-xs text-slate-400">
+                    🕗 {{ \Carbon\Carbon::parse($upcomingEvent->tanggal)->translatedFormat('l, d M Y') }}
+                    • {{ substr($upcomingEvent->jam,0,5) }} WIB
+                </p>
+
+                <div class="flex items-center justify-between mt-3">
+
+                    <span class="text-xs bg-slate-100 px-2 py-1 rounded-full text-slate-500">
+                        {{ $upcomingEvent->jumlah_peserta }}/{{ $upcomingEvent->kuota }} peserta
+                    </span>
+
+                    <span class="bg-primary text-white text-xs font-semibold px-4 py-1.5 rounded-full">
+                        Lihat Detail
+                    </span>
+
+                </div>
+
+            </div>
+
+        </a>
+
+    @endforeach
+
+    @else
+
+        <div class="bg-white rounded-2xl p-6 text-center text-slate-400 text-sm border border-slate-100">
+            Belum ada event mendatang.
+        </div>
+
+    @endif
+    </div> 
+
+            
             <div>
                 <div class="flex items-center justify-between mb-3">
                     <h2 class="font-bold text-navy">Rekomendasi Teman</h2>
@@ -73,25 +119,26 @@
             </div>
         </div>
 
-        <div class="space-y-6">
-            <div class="bg-white rounded-2xl p-5 border border-slate-100">
-                <h3 class="font-bold text-navy mb-3">Statistik Kamu</h3>
-                <div class="grid grid-cols-3 gap-2 text-center">
+            <div class="space-y-6">
+            <div class="bg-navy rounded-3xl p-6 text-white shadow-soft relative overflow-hidden">
+                <svg class="absolute -right-4 -bottom-6 w-32 h-32 text-white/5" viewBox="0 0 100 100" fill="none"><circle cx="50" cy="50" r="48" stroke="currentColor" stroke-width="6"/></svg>
+                <p class="font-bold mb-4 relative">Statistik Kamu</p>
+                <div class="grid grid-cols-3 gap-2 relative">
                     <div>
-                        <p class="text-xl font-extrabold text-primary">{{ $stats['teman'] }}</p>
-                        <p class="text-xs text-slate-400">Teman</p>
+                        <p class="text-2xl font-extrabold text-lime">{{ $stats['teman'] }}</p>
+                        <p class="text-[11px] text-white/60">Teman</p>
                     </div>
                     <div>
-                        <p class="text-xl font-extrabold text-primary">{{ $stats['event'] }}</p>
-                        <p class="text-xs text-slate-400">Event</p>
+                        <p class="text-2xl font-extrabold text-lime">{{ $stats['event'] }}</p>
+                        <p class="text-[11px] text-white/60">Event</p>
                     </div>
                     <div>
-                        <p class="text-xl font-extrabold text-primary">{{ $stats['aktivitas'] }}</p>
-                        <p class="text-xs text-slate-400">Aktivitas</p>
+                        <p class="text-2xl font-extrabold text-lime">{{ $stats['aktivitas'] }}</p>
+                        <p class="text-[11px] text-white/60">Aktivitas</p>
                     </div>
                 </div>
             </div>
-
+            
             <div class="bg-white rounded-2xl p-5 border border-slate-100">
                 <h3 class="font-bold text-navy mb-3">Hari Ini • {{ now()->translatedFormat('d M') }}</h3>
                 @forelse($todayEvents as $ev)

@@ -13,12 +13,13 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
 
-        $upcomingEvent = Event::with(['sport', 'creator'])
-            ->where('status', 'upcoming')
-            ->where('tanggal', '>=', now()->toDateString())
-            ->orderBy('tanggal')
-            ->orderBy('jam')
-            ->first();
+        $upcomingEvents = Event::with(['sport', 'creator'])
+        ->where('status', 'upcoming')
+        ->where('tanggal', '>=', now()->toDateString())
+        ->orderBy('tanggal')
+        ->orderBy('jam')
+        ->take(3) // tampilkan 3 event saja
+        ->get();
 
         $mySportIds = $user->sports()->pluck('sports.id');
 
@@ -48,6 +49,7 @@ class DashboardController extends Controller
             'aktivitas' => $user->eventParticipations()->count(),
         ];
 
-        return view('dashboard', compact('user', 'upcomingEvent', 'rekomendasi', 'todayEvents', 'stats'));
+        
+        return view('dashboard', compact('user','upcomingEvents','rekomendasi','todayEvents','stats'));
     }
 }

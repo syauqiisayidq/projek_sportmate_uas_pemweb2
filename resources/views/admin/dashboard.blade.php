@@ -4,38 +4,65 @@
     <h1 class="text-2xl font-bold text-navy mb-6">Dashboard</h1>
 
     <div class="grid grid-cols-4 gap-4 mb-6">
-        <div class="bg-white rounded-2xl p-5 border border-slate-100">
-            <p class="text-2xl font-extrabold text-navy">{{ $totalUsers }}</p>
+        <div class="bg-navy rounded-2xl p-5 border border-slate-100">
+            <p class="text-2xl font-extrabold text-white">{{ $totalUsers }}</p>
             <p class="text-xs text-slate-400">Total Users</p>
         </div>
-        <div class="bg-white rounded-2xl p-5 border border-slate-100">
-            <p class="text-2xl font-extrabold text-navy">{{ $totalEvents }}</p>
+        <div class="bg-navy rounded-2xl p-5 border border-slate-100">
+            <p class="text-2xl font-extrabold text-white">{{ $totalEvents }}</p>
             <p class="text-xs text-slate-400">Total Events</p>
         </div>
-        <div class="bg-white rounded-2xl p-5 border border-slate-100">
-            <p class="text-2xl font-extrabold text-navy">{{ $totalFriendRequests }}</p>
+        <div class="bg-navy rounded-2xl p-5 border border-slate-100">
+            <p class="text-2xl font-extrabold text-white">{{ $totalFriendRequests }}</p>
             <p class="text-xs text-slate-400">Friend Requests</p>
         </div>
-        <div class="bg-white rounded-2xl p-5 border border-slate-100">
-            <p class="text-2xl font-extrabold text-navy">{{ $activeUsers }}</p>
+        <div class="bg-navy rounded-2xl p-5 border border-slate-100">
+            <p class="text-2xl font-extrabold text-white">{{ $activeUsers }}</p>
             <p class="text-xs text-slate-400">Active Users</p>
         </div>
     </div>
 
     <div class="grid grid-cols-3 gap-4">
-        <div class="col-span-2 bg-white rounded-2xl p-5 border border-slate-100">
-            <h3 class="font-bold text-navy mb-4">Aktivitas Mingguan</h3>
-            <div class="flex items-end gap-3 h-40">
-                @php $max = max(1, $aktivitasMingguan->max('total')); @endphp
-                @foreach($aktivitasMingguan as $d)
-                    <div class="flex-1 flex flex-col items-center gap-2">
-                        <div class="w-full bg-primary/20 rounded-t-lg relative" style="height: {{ max(6, ($d['total']/$max)*100) }}%">
-                            <div class="absolute inset-x-0 bottom-0 bg-primary rounded-t-lg" style="height:100%"></div>
-                        </div>
-                        <span class="text-xs text-slate-400">{{ $d['label'] }}</span>
-                    </div>
-                @endforeach
-            </div>
+        <div class="col-span-2 bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
+            <p class="font-semibold text-navy mb-4">Aktivitas Mingguan</p>
+            <svg viewBox="0 0 320 140" class="w-full h-36">
+                
+            @php
+    $max = max(1, $aktivitasMingguan->max('total'));
+
+    $points = $aktivitasMingguan->values()->map(function ($d, $i) use ($max) {
+        $x = 20 + ($i * 50);
+        $y = 120 - (($d['total'] / $max) * 100);
+
+        return "$x,$y";
+    })->implode(' ');
+@endphp
+
+<polyline
+    points="{{ $points }}"
+    fill="none"
+    stroke="#108961"
+    stroke-width="3"
+    stroke-linecap="round"
+    stroke-linejoin="round"/>
+
+@foreach ($aktivitasMingguan->values() as $i => $d)
+    <circle
+        cx="{{ 20 + ($i * 50) }}"
+        cy="{{ 120 - (($d['total'] / $max) * 100) }}"
+        r="4"
+        fill="#108961" />
+
+    <text
+        x="{{ 20 + ($i * 50) }}"
+        y="135"
+        font-size="10"
+        text-anchor="middle"
+        fill="#94a3b8">
+        {{ $d['label'] }}
+    </text>
+@endforeach
+            </svg>
         </div>
 
         <div class="bg-white rounded-2xl p-5 border border-slate-100">

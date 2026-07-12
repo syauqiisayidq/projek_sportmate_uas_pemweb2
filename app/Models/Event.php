@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -54,4 +55,29 @@ class Event extends Model
     {
         return $this->jumlah_peserta >= $this->kuota;
     }
+
+
+    
+    public function getStatusEventAttribute()
+{
+    $mulai = Carbon::parse(
+        $this->tanggal->format('Y-m-d') . ' ' . $this->jam
+    );
+
+    $selesai = Carbon::parse(
+        $this->tanggal->format('Y-m-d') . ' ' . $this->jam_selesai
+    );
+
+    $sekarang = now();
+
+    if ($sekarang->lt($mulai)) {
+        return 'Upcoming';
+    }
+
+    if ($sekarang->between($mulai, $selesai)) {
+        return 'Ongoing';
+    }
+
+    return 'Finished';
+}
 }

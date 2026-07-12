@@ -64,6 +64,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
+
+    Route::get('/users/{user}', [AdminUserController::class, 'show'])
+    ->name('users.show');
+
     Route::delete('/users/{user}', [AdminUserController::class, 'destroy'])->name('users.destroy');
 
     Route::get('/sports', [AdminSportController::class, 'index'])->name('sports.index');

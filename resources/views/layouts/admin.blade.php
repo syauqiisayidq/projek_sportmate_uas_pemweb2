@@ -19,9 +19,24 @@
 <div class="flex min-h-screen">
     <aside class="w-64 bg-navy text-white flex flex-col fixed h-full">
         <div class="px-6 py-6 flex items-center gap-2 border-b border-white/10">
-            <div class="w-9 h-9 rounded-xl bg-primary flex items-center justify-center text-white font-bold text-lg">S</div>
+
+              <!-- Logo -->
+
+            <div class="w-12 h-12 rounded-xl bg-primary flex items-center justify-center shadow">
+
+                <svg xmlns="http://www.w3.org/2000/svg"
+                     class="w-7 h-7 text-white"
+                     fill="currentColor"
+                     viewBox="0 0 24 24">
+
+                    <path d="M12 2C8 2 4.7 5.3 4.7 9.4c0 5.2 7.3 12.6 7.3 12.6s7.3-7.4 7.3-12.6C19.3 5.3 16 2 12 2zm0 10a2.8 2.8 0 100-5.6 2.8 2.8 0 000 5.6z"/>
+
+                </svg>
+
+            </div>
+
             <div>
-                <p class="font-extrabold leading-none">SportMate</p>
+                <p class="font-extrabold leading-0">SportMate</p>
                 <p class="text-xs text-white/50">Admin</p>
             </div>
         </div>

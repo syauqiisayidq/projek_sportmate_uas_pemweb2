@@ -4,7 +4,14 @@
     <a href="{{ route('events.index') }}" class="text-sm text-slate-400 mb-4 inline-flex items-center gap-1">&larr; Detail Event</a>
 
     <div class="bg-white rounded-3xl overflow-hidden border border-slate-100 max-w-2xl">
-        <div class="h-44 bg-gradient-to-r from-emerald-400 to-emerald-600 flex items-center justify-center text-white text-2xl font-bold">
+        <div class="block relative overflow-hidden border border-slate-100 rounded-2xl mb-4 shadow-soft group">
+        <div class="relative h-32 bg-gradient-to-br from-primaryLight via-primary to-navy overflow-hidden flex items-center justify-center text-white font-bold text-lg">
+        <svg class="absolute -right-6 -top-6 w-40 h-40 text-white/10"
+                     viewBox="0 0 100 100"
+                     fill="none">
+                    <circle cx="50" cy="50" r="48" stroke="currentColor" stroke-width="2"/>
+                    <circle cx="50" cy="50" r="32" stroke="currentColor" stroke-width="2"/>
+                </svg>
             {{ $event->sport->nama_sport ?? '' }}
         </div>
         <div class="p-6">

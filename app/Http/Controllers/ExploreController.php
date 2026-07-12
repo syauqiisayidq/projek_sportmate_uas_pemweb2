@@ -14,7 +14,9 @@ class ExploreController extends Controller
         $user = Auth::user();
         $mySportIds = $user->sports()->pluck('sports.id');
 
-        $query = User::where('id', '!=', $user->id)->with('sports');
+        $query = User::with('sports')
+        ->where('role', 'user')
+        ->where('id', '!=', $user->id);
 
         if ($request->filled('q')) {
             $query->where('nama', 'like', '%'.$request->q.'%');

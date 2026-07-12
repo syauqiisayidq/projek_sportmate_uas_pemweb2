@@ -24,6 +24,16 @@ class AdminUserController extends Controller
         return view('admin.users.index', compact('users'));
     }
 
+    public function show(User $user)
+{
+    $user->load([
+        'sports',
+        'joinedEvents',
+    ]);
+
+    return view('admin.users.show', compact('user'));
+}
+
     public function destroy(User $user)
     {
         $user->delete();
