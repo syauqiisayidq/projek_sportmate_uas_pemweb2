@@ -11,36 +11,56 @@ class ExploreController extends Controller
 {
     public function index(Request $request)
     {
-        $user = Auth::user();
-        $mySportIds = $user->sports()->pluck('sports.id');
+        $keyword = $request->input('q');
+        $sportId = $request->input('sport_id');
+        $kota = $request->input('kota');
 
-        $query = User::with('sports')
-        ->where('role', 'user')
-        ->where('id', '!=', $user->id);
+        $authUser = Auth::user();
 
-        if ($request->filled('q')) {
-            $query->where('nama', 'like', '%'.$request->q.'%');
+        // 1. Inisialisasi query utama & Eager Loading relasi 'sports' agar efisien
+        $query = User::query()->where('id', '!=', $authUser->id ?? 0)->with('sports');
+
+        // 2. Pencarian Pintar (Smart Search) lewat Input Teks
+        if (!empty($keyword)) {
+            $query->where(function ($q) use ($keyword) {
+                $q->where('nama', 'like', "%{$keyword}%")
+                  ->orWhere('bio', 'like', "%{$keyword}%")
+                  ->orWhereHas('sports', function ($relationQuery) use ($keyword) {
+                      $relationQuery->where('nama_sport', 'like', "%{$keyword}%");
+                  });
+            });
         }
 
-        if ($request->filled('sport_id')) {
-            $sportId = $request->sport_id;
-            $query->whereHas('sports', fn ($q) => $q->where('sports.id', $sportId));
+        // 3. Filter berdasarkan Dropdown Kategori Sport
+        if (!empty($sportId)) {
+            $query->whereHas('sports', function ($q) use ($sportId) {
+                $q->where('sports.id', $sportId);
+            });
         }
 
-        if ($request->filled('kota')) {
-            $query->where('kota', 'like', '%'.$request->kota.'%');
+        // 4. Filter berdasarkan Dropdown Kota
+        if (!empty($kota)) {
+            $query->where('kota', 'like', "%{$kota}%");
         }
 
-        $users = $query->get()->map(function ($u) use ($mySportIds, $user) {
-            $shared = $u->sports->pluck('id')->intersect($mySportIds)->count();
-            $u->match_percent = $mySportIds->count() > 0 ? min(99, 55 + $shared * 15) : 55;
-            $u->friend_status = $user->friendStatusWith($u);
+        // Eksekusi pencarian data user
+        $users = $query->get();
 
-            return $u;
-        })->sortByDesc('match_percent')->values();
+        // 5. Hitung persentase kecocokan (% Match) untuk masing-masing user yang ditemukan
+        if ($authUser) {
+            $mySportIds = $authUser->sports()->pluck('user_sports');
+            
+            $users->each(function ($user) use ($mySportIds) {
+                $shared = $user->sports->pluck('id')->intersect($mySportIds)->count();
+                // Simpan nilai match ke dalam properti dinamis tiap user
+                $user->match_percent = $mySportIds->count() > 0 ? min(99, 55 + $shared * 15) : 55;
+            });
+        }
 
-        $sports = Sport::orderBy('nama_sport')->get();
+        // Ambil data semua sport untuk isi pilihan dropdown di view
+        $sports = Sport::all();
 
+        // Return view dengan membawa data users dan sports yang sudah bersih dari eror
         return view('explore.index', compact('users', 'sports'));
     }
 
